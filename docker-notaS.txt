@@ -1,0 +1,56 @@
+
+
+ref: Docker Mount Volume – How To Mount a Local Directory
+https://www.freecodecamp.org/news/docker-mount-volume-guide-how-to-mount-a-local-directory/
+
+# run mysql container in the background
+
+$ docker run --name mysql -p3306:3306 -v $(pwd)/datadir:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123 -d mysql:8.0.28-debian
+  docker run --name mysql01 -p3306:3306 -v $(pwd)/datadir01:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123 -d mysql:8.0.28-debian
+
+  cd /var/lib/mysql
+  mysql -u root -p123 < mydb.sql
+
+  docker start 9497c18bbbfc
+
+-----------------------------------------------------------------------------
+You can commit your existing container (that creates a new image from container’s changes) and then run it with your new mounts.
+
+Example:
+
+$ docker ps  -a
+
+CONTAINER ID        IMAGE                 COMMAND                  CREATED              STATUS                          PORTS               NAMES
+5a8f89adeead        ubuntu:14.04          "/bin/bash"              About a minute ago   Exited (0) About a minute ago                       agitated_newton
+
+$ docker commit 5a8f89adeead newimagename
+$ docker run -ti -v "$PWD/somedir":/somedir newimagename /bin/bash
+If it's all OK, stop your old container, and use this new one.
+
+You can also commit a container using its name, for example:
+
+docker commit agitated_newton newimagename
+That's it :)
+-----------------------------------------------------------------------------
+
+# show content of data directory
+$ ls -la datadir
+total 383848
+-rw-r-----    1 sebarthel  staff    196608 Mar 26 22:47 #ib_16384_0.dblwr
+-rw-r-----    1 sebarthel  staff   8585216 Mar 26 22:47 #ib_16384_1.dblwr
+drwxr-x---   12    sebarthel  staff       384 Mar 26 22:47 #innodb_temp
+drwxr-xr-x@  27 sebarthel  staff       864 Mar 26 22:47 .
+drwxr-xr-x    3 sebarthel  staff        96 Mar 26 22:47 ..
+-rw-r-----    1 sebarthel  staff        56 Mar 26 22:47 auto.cnf
+-rw-r-----    1 sebarthel  staff       913 Mar 26 22:47 binlog.000001
+(more directories)
+
+# stop mysql container
+docker rm -f mysql-db
+------------------------------------------------------------------------------------------------
+
+
+
+ref: Docker Volumes explained with examples
+https://www.youtube.com/watch?v=dpVaSUamHto
+

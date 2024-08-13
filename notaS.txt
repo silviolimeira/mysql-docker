@@ -1,0 +1,93 @@
+
+ref: Instalando MySQL no Docker com Docker-Compose
+https://medium.com/@alan-vieira/rodando-mysql-no-docker-e6e05b727196
+
+ref: How to backup and restore MySQL databases using the mysqldump command
+https://www.sqlshack.com/how-to-backup-and-restore-mysql-databases-using-the-mysqldump-command/
+
+docker-compose.yml:
+-------------------
+version: '3.8'
+services:
+  db:
+    image: mysql/mysql-server:latest
+    container_name: my-mysql
+    restart: always
+    environment:
+      - MYSQL_DATABASE=mysqlDB
+      - MYSQL_ROOT_PASSWORD=mysqlPW
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-volume:/var/lib/mysql
+volumes:
+  mysql-volume:
+    driver: local
+
+Iniciar:    
+$ docker-compose up -d
+
+Acessar container com bash:
+docker exec -it my-mysql bash
+  acessar banco de dados
+  mysql -u root -p
+
+  criar o banco:
+  CREATE DATABASE MYSQLTESTE;
+  mysql --user="root" --password="123" --database="mysql" --execute="CREATE DATABASE mydb;"
+  
+  alterar restricao de conexao:
+  update mysql.user set host='%' where user='root';
+  
+  fazer com que alteracoes entrem em vigor:
+  FLUSH PRIVILEGES;
+ 
+ Reiniciando servidor mysql: 
+ docker restart my-mysql
+ 
+ Copiar arquivo para o docker:
+ docker cp mydb.sql my-mysql:/tmp
+   a partir do docker:
+   docker cp my-mysql:/tmp/mydb_20240809.sql .
+  
+  
+  
+ Restaurar o banco:
+ mysql -u root -p mydb < /var/lib/mysql/data.sql
+ 
+  mysql --user="$user" --password="$password" --database="$database" --execute="DROP DATABASE $user; CREATE DATABASE $database;" 
+  mysql --user="root" --password="123" --database="mysql" --execute="CREATE DATABASE mydb;"
+ 
+ Fazer backup:
+ mysqldump -u root -p sakila --no-create-info > C:\MySQLBackup\sakila_data_only_20200424.sql
+ 
+ Fazer backup tabela especifica:
+ mysqldump -u root -p sakila actor payment > C:\MySQLBackup\actor_payment_table_20200424.sql
+ 
+ Fazer backup da estrutura de tabelas:
+ mysqldump -u root -p --no-data sakila > C:\MySQLBackup\sakila_objects_definition_20200424.sql
+ 
+ Backup de multiplos banco de dados:
+ mysqldump -u root -p --databases sakila employees > C:\MySQLBackup\sakila_employees_20200424.sql
+ 
+ Backup de um banco de dados unico:
+ mysqldump -u root -p mydb > /var/lib/mysql/mydb_20240810.sql
+  
+ ???volume create --name myvolume --opt type=none --opt device=/home/silvio/mysql --opt o=bind 
+ ???docker container inspect my-mysql | grep volume 
+  
+  ???docker volume create neo4jdata
+  ???docker run -it --rm --volume neo4jdata:/data neo4j:5.22.0 
+     
+ Alterar a restricao de conexao:
+ update mysql.user set host='%' where user='root';
+ FLUSH PRIVILEGES;
+ 
+ 
+ Script.sql:
+ -----------
+ 
+  
+
+
+
